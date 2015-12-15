@@ -10,6 +10,15 @@
   "author": "",
   "license": "MIT",
   "devDependencies": {
-    "react": "^0.14.3"
+    "amd-name-resolver": "0.0.2",
+    "broccoli": "^0.16.9",
+    "broccoli-babel-transpiler": "^5.5.0",
+    "broccoli-concat": "^2.0.3",
+    "broccoli-funnel": "^1.0.1",
+    "broccoli-merge-trees": "^1.1.0",
+    "broccoli-react": "^0.7.1",
+    "react": "^0.14.3",
+    "react-cli": "file:///Users/justinniessner/projects/react-cli",
+    "react-dom": "^0.14.3"
   }
 }
