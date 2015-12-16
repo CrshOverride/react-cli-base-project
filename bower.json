@@ -1,0 +1,21 @@
+{
+  "name": "cli-test-app",
+  "description": "Description of cli-test-app",
+  "main": "",
+  "authors": [
+    "Justin Niessner <justin.niessner@adroll.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/CrshOverride/react-cli-base-project",
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "loader.js": "~3.5.0"
+  }
+}

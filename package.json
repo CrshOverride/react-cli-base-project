@@ -17,6 +17,7 @@
     "broccoli-funnel": "^1.0.1",
     "broccoli-merge-trees": "^1.1.0",
     "broccoli-react": "^0.7.1",
+    "lodash.omit": "^3.1.0",
     "react": "^0.14.3",
     "react-cli": "file:///Users/justinniessner/projects/react-cli",
     "react-dom": "^0.14.3"
