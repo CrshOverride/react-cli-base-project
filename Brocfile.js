@@ -1,17 +1,18 @@
 'use strict';
 
-let babel           = require('broccoli-babel-transpiler'),
-    mergeTrees      = require('broccoli-merge-trees'),
-    concat          = require('broccoli-concat'),
-    funnel          = require('broccoli-funnel'),
-    amdNameResolver = require('amd-name-resolver'),
-    omit            = require('lodash.omit'),
-    babelOptions    = {
+let babel                       = require('broccoli-babel-transpiler'),
+    broccoliSource              = require('broccoli-source'),
+    mergeTrees                  = require('broccoli-merge-trees'),
+    concat                      = require('broccoli-concat'),
+    funnel                      = require('broccoli-funnel'),
+    browserify                  = require('broccoli-fast-browserify'),
+    omit                        = require('lodash.omit'),
+    merge                       = require('lodash.merge'),
+    npmJson                     = require('./package.json'),
+    appDir                      = broccoliSource.WatchedDir('app'),
+    babelOptions                = {
         filterExtensions: ['js', 'jsx', 'es6'],
-        browserPolyfill: true,
-        moduleIds: true,
-        modules: 'amd',
-        resolveModuleSource: amdNameResolver
+        browserPolyfill: true
     };
 
 class ReactApp {
@@ -26,45 +27,44 @@ class ReactApp {
         });
     }
 
-    appJavascript() {
+    appJavascript(thirdPartyDeps) {
         let appJs = babel('app', babelOptions);
 
-        return concat(appJs, {
-            inputFiles: ['**/*.js'],
-            outputFile: '/scripts/app.js'
+        appJs = browserify(appJs, {
+            browserify: {
+                debug: true
+            },
+            bundles: {
+                'scripts/app.js': {
+                    entryPoints: ['index.js'],
+                    externals: thirdPartyDeps
+                }
+            }
         });
 
         return appJs;
     }
 
-    vendorJavascript() {
-        let loader = funnel('bower_components/loader.js', {
-            files: ['loader.js']
+    vendorJavascript(thirdPartyDeps) {
+        let vendorJs = browserify('node_modules', {
+            browserify: {
+                debug: false
+            },
+            bundles: {
+                'scripts/vendor.js': {
+                    entryPoints: [],
+                    require: thirdPartyDeps
+                }
+            }
         });
 
-        // let react = funnel('node_modules/react', {
-        //     files: ['react.js']
-        // });
-
-        // let reactDom = funnel('node_modules/react-dom', {
-        //     files: ['index.js']
-        // });
-
-        // let vendorJs = babel(mergeTrees([react, reactDom]), babelOptions);
-        let vendorJs = mergeTrees([loader]);
-
-        return concat(vendorJs, {
-            inputFiles: ['**/*.js'],
-            outputFile: '/scripts/vendor.js',
-            headerFiles: ['loader.js']
-        });
+        return vendorJs;
     }
 
     allJavascript() {
-        return mergeTrees([
-            this.vendorJavascript(),
-            this.appJavascript()
-        ]);
+        let thirdPartyKeys = Object.keys(npmJson.dependencies || {})
+
+        return mergeTrees([this.vendorJavascript(thirdPartyKeys), this.appJavascript(thirdPartyKeys)]);
     }
 
     toTree() {
@@ -72,10 +72,6 @@ class ReactApp {
             this.allJavascript(),
             this.index()
         ]);
-    }
-
-    _appBoot() {
-        return
     }
 }
 
